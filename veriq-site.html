@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Veriq — официальная капча</title>
+  <style>
+    :root{
+      --primary:#6750A4;--on-primary:#FFFFFF;--primary-container:#EADDFF;--on-primary-container:#21005D;
+      --secondary:#625B71;--secondary-container:#E8DEF8;--on-secondary-container:#1D192B;
+      --tertiary:#7D5260;--tertiary-container:#FFD8E4;--on-tertiary-container:#31111D;
+      --surface:#FEF7FF;--surface-dim:#DED8E1;--surface-container-lowest:#FFFFFF;--surface-container-low:#F7F2FA;
+      --surface-container:#F3EDF7;--surface-container-high:#ECE6F0;--surface-container-highest:#E6E0E9;
+      --on-surface:#1D1B20;--on-surface-variant:#49454F;--outline:#79747E;--outline-variant:#CAC4D0;
+      --shadow:rgba(0,0,0,.15);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Roboto,"Google Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:var(--surface);color:var(--on-surface);line-height:1.5}
+    a{color:var(--primary)}
+    .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--outline-variant)}
+    .brandrow{display:flex;align-items:center;gap:12px}
+    .logo-mark{width:40px;height:40px;display:grid;place-items:center}
+    .brand{font-size:22px;font-weight:500;letter-spacing:.2px}
+    .nav{display:flex;flex-wrap:wrap;gap:4px}
+    .nav a{color:var(--on-surface-variant);text-decoration:none;font-size:14px;font-weight:500;padding:8px 12px;border-radius:999px}
+    .nav a:hover{background:var(--surface-container-high)}
+    .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 72px}
+    .hero{position:relative;overflow:hidden;display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center;padding:28px;border-radius:36px;background:linear-gradient(135deg,var(--surface-container-low),var(--surface-container));border:1px solid var(--outline-variant)}
+    .hero h1{margin:0 0 12px;font-size:clamp(30px,5vw,54px);line-height:1.05;font-weight:500;letter-spacing:-.2px}
+    .hero p{margin:0 0 22px;color:var(--on-surface-variant);font-size:17px;max-width:58ch}
+    .actions{display:flex;flex-wrap:wrap;gap:12px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:0 24px;border-radius:999px;text-decoration:none;font-weight:500;font-size:14px;letter-spacing:.1px;border:none;cursor:pointer;transition:filter .15s ease,transform .15s ease}
+    .btn:active{transform:scale(.98)}
+    .btn.filled{background:var(--primary);color:var(--on-primary);box-shadow:0 1px 2px rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15)}
+    .btn.tonal{background:var(--secondary-container);color:var(--on-secondary-container)}
+    .btn.outline{background:transparent;color:var(--primary);border:1px solid var(--outline)}
+    .hero-art{position:relative;min-height:320px;border-radius:32px;background:var(--surface-container-lowest);border:1px solid var(--outline-variant);overflow:hidden}
+    .shape{position:absolute}
+    .shape svg{display:block;width:100%;height:100%}
+    .s-flower{width:170px;height:170px;right:-10px;top:-10px;color:var(--primary-container);animation:spin 22s linear infinite}
+    .s-star{width:120px;height:120px;left:18px;top:24px;color:var(--tertiary-container);animation:spin-rev 16s linear infinite}
+    .s-clover{width:140px;height:140px;right:24px;bottom:18px;color:var(--secondary-container);animation:spin 26s linear infinite}
+    .s-pill{width:180px;height:72px;left:24px;bottom:36px;color:var(--surface-container-highest);animation:sway 10s ease-in-out infinite}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes spin-rev{from{transform:rotate(360deg)}to{transform:rotate(0deg)}}
+    @keyframes sway{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(8deg)}}
+    .preview-card{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(280px,82%);background:var(--surface-container);border:1px solid var(--outline-variant);border-radius:24px 12px 24px 12px;padding:14px;box-shadow:0 4px 12px var(--shadow)}
+    .preview-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .preview-box{width:22px;height:22px;border:2px solid var(--outline);border-radius:6px}
+    .preview-line{height:10px;border-radius:999px;background:var(--outline-variant);flex:1}
+    .preview-chip{display:inline-block;font-size:11px;font-weight:500;padding:4px 10px;border-radius:12px 6px 12px 6px;background:var(--primary-container);color:var(--on-primary-container)}
+    .section{margin-top:40px}
+    .section h2{font-size:32px;line-height:1.15;margin:0 0 8px;font-weight:500}
+    .section .lead{margin:0 0 18px;color:var(--on-surface-variant);max-width:70ch}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+    .card{position:relative;overflow:hidden;background:var(--surface-container);border:1px solid var(--outline-variant);border-radius:28px;padding:20px}
+    .card .icon-shape{width:48px;height:48px;margin-bottom:12px;color:var(--primary-container);animation:spin 18s linear infinite}
+    .grid .card:nth-child(2) .icon-shape{animation:spin-rev 20s linear infinite}
+    .grid .card:nth-child(3) .icon-shape{animation:sway 8s ease-in-out infinite}
+    .grid .card:nth-child(4) .icon-shape{animation:spin 24s linear infinite}
+    .card h3{margin:0 0 6px;font-size:18px;font-weight:500}
+    .card p{margin:0;color:var(--on-surface-variant);font-size:14px;line-height:20px}
+    .code-card{background:var(--surface-container-high);border:1px solid var(--outline-variant);border-radius:28px;padding:18px}
+    pre{margin:10px 0 0;background:#1D1B20;color:#E6E1E5;padding:16px;border-radius:20px;overflow:auto;font-size:13px;line-height:1.5}
+    .bot-card{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;background:var(--surface-container-low);border:1px solid var(--outline-variant);border-radius:28px;padding:20px}
+    .bot-badge{width:56px;height:56px;border-radius:18px;background:var(--primary-container);display:grid;place-items:center}
+    .bot-card h3{margin:0 0 4px;font-size:20px;font-weight:500}
+    .bot-card p{margin:0 0 12px;color:var(--on-surface-variant);font-size:14px}
+    .footer{margin-top:44px;padding-top:18px;border-top:1px solid var(--outline-variant);color:var(--on-surface-variant);font-size:13px;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+
+    /* Desktop & Mobile в одном HTML */
+    @media (min-width:861px){
+      .wrap{padding:36px 28px 80px}
+      .hero{padding:36px}
+    }
+    @media (max-width:860px){
+      .hero{grid-template-columns:1fr;padding:20px;border-radius:28px}
+      .hero-art{min-height:260px;order:-1}
+      .topbar{padding:10px 14px}
+      .nav{gap:2px}
+      .nav a{padding:8px 10px;font-size:13px}
+      .section h2{font-size:26px}
+    }
+    @media (max-width:520px){
+      .wrap{padding:16px 14px 48px}
+      .hero{padding:16px;border-radius:24px}
+      .hero h1{font-size:30px}
+      .hero p{font-size:15px}
+      .actions{flex-direction:column}
+      .actions .btn{width:100%}
+      .hero-art{min-height:220px;border-radius:24px}
+      .s-flower{width:130px;height:130px}
+      .s-clover{width:110px;height:110px}
+      .s-star{width:90px;height:90px}
+      .bot-card{grid-template-columns:1fr;text-align:center;justify-items:center}
+      .brand{font-size:20px}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brandrow">
+      <div class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2l4.2 5.4 6.8-.7-1.7 6.6 5.7 3.8-5.7 3.8 1.7 6.6-6.8-.7L20 32l-4.2-5.4-6.8.7 1.7-6.6L5 17.1l5.7-3.8-1.7-6.6 6.8.7L20 2z" fill="#EADDFF"/>
+          <path d="M15.2 20.2l3 3 6.8-7" stroke="#21005D" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand">Veriq</div>
+    </div>
+    <nav class="nav"><a href="#features">Возможности</a><a href="#integrate">Интеграция</a><a href="#bot">Telegram-бот</a></nav>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Официальная капча Veriq</h1>
+        <p>Проверка «Я не робот» для сайтов и сервисов: автоматическое подтверждение, слайдер-пазл и текст с картинки. Современный интерфейс в стиле Material 3 Expressive.</p>
+        <div class="actions">
+          <a class="btn filled" href="https://t.me/zcaptcha_bot" target="_blank" rel="noopener">Перейти в бота</a>
+          <a class="btn tonal" href="#integrate">Подключить</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <!-- M3 expressive shapes -->
+        <div class="shape s-flower">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><g fill="currentColor"><circle cx="100" cy="55" r="38"/><circle cx="145" cy="100" r="38"/><circle cx="100" cy="145" r="38"/><circle cx="55" cy="100" r="38"/><circle cx="100" cy="100" r="42"/></g></svg>
+        </div>
+        <div class="shape s-star">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M60 4l10 20 22 2-16 15 5 22-21-11-21 11 5-22-16-15 22-2z"/></svg>
+        </div>
+        <div class="shape s-clover">
+          <svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg"><g fill="currentColor"><circle cx="70" cy="38" r="28"/><circle cx="102" cy="70" r="28"/><circle cx="70" cy="102" r="28"/><circle cx="38" cy="70" r="28"/><rect x="50" y="50" width="40" height="40" rx="12"/></g></svg>
+        </div>
+        <div class="shape s-pill"><svg viewBox="0 0 180 72" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="180" height="72" rx="36" fill="currentColor"/></svg></div>
+        <div class="preview-card">
+          <div class="preview-head"><div class="preview-box"></div><div style="font-size:14px;font-weight:500">Я не робот</div><span class="preview-chip" style="margin-left:auto">Veriq</span></div>
+          <div class="preview-line" style="width:70%"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <h2>Возможности</h2>
+      <p class="lead">Несколько типов проверки, простой виджет и серверная валидация токена.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="icon-shape"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M24 4l5 9 10 1-7 7 2 10-10-5-10 5 2-10-7-7 10-1z"/></svg></div>
+          <h3>Авто-проверка</h3><p>Иногда система подтверждает человека автоматически, без лишних шагов.</p>
+        </div>
+        <div class="card">
+          <div class="icon-shape"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><g fill="currentColor"><circle cx="24" cy="14" r="9"/><circle cx="34" cy="24" r="9"/><circle cx="24" cy="34" r="9"/><circle cx="14" cy="24" r="9"/></g></svg></div>
+          <h3>Слайдер-пазл</h3><p>Нужно передвинуть фрагмент, чтобы точно совместить его с вырезом.</p>
+        </div>
+        <div class="card">
+          <div class="icon-shape"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="40" height="28" rx="14" fill="currentColor"/></svg></div>
+          <h3>Текст с картинки</h3><p>Ввод символов, изображённых на картинке, с разными вариантами отображения.</p>
+        </div>
+        <div class="card">
+          <div class="icon-shape"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M24 6c7 0 10 6 10 6s6 1 8 8c-4 1-6 4-6 8s2 7 6 8c-2 7-8 8-8 8s-3 6-10 6-10-6-10-6-6-1-8-8c4-1 6-4 6-8s-2-7-6-8c2-7 8-8 8-8s3-6 10-6z"/></svg></div>
+          <h3>Material 3 Expressive</h3><p>Выразительные формы, чистая типографика и понятные состояния интерфейса.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="integrate">
+      <h2>Интеграция</h2>
+      <p class="lead">Добавьте виджет на страницу и проверяйте токен на своём сервере.</p>
+      <div class="code-card">
+        <strong>HTML-виджет</strong>
+        <pre>&lt;link rel="stylesheet" href="https://BASE_URL/static/widget.css"&gt;
+&lt;div class="mycaptcha-widget" data-sitekey="SITE_KEY" data-base="https://BASE_URL"&gt;&lt;/div&gt;
+&lt;script src="https://BASE_URL/widget.js"&gt;&lt;/script&gt;
+
+&lt;!-- После прохождения в форме появится поле: name="mycaptcha_token" --&gt;</pre>
+      </div>
+    </section>
+
+    <section class="section" id="bot">
+      <h2>Telegram-бот</h2>
+      <p class="lead">Через бота можно создать ключи и получить готовый HTML и Python-код для вставки.</p>
+      <div class="bot-card">
+        <div class="bot-badge" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 13.5l-.3 4.2c.4 0 .6-.2 .8-.4l2-1.9 4.1 3c.8.4 1.3.2 1.5-.7l2.7-12.7c.3-1.1-.4-1.6-1.1-1.3L3.3 9.8c-1.1.4-1.1 1.1-.2 1.4l4.1 1.3 9.5-6c.4-.3 .8-.1 .5.2L9.5 13.5z" fill="#21005D"/></svg>
+        </div>
+        <div>
+          <h3>Veriq Bot</h3>
+          <p>Откройте бота в Telegram, чтобы получить ключи и код для интеграции.</p>
+          <a class="btn filled" id="bot-link" href="https://t.me/zcaptcha_bot" target="_blank" rel="noopener">Открыть бота</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <span>Veriq — официальная страница капчи</span>
+      <span>Нажмите на «Veriq» в виджете, чтобы открыть этот сайт</span>
+    </div>
+  </main>
+</body>
+</html>
